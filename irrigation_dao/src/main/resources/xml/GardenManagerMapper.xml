@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.libv.mapper.GardenManagerMapper">
+    <!-- 发布任务 -->
+    <insert id="addTask" parameterType="com.libv.entity.WorkTask">
+        insert into work_task(id, gardener_id, task_content, start_time)
+        values (#{deviceId}, #{gardenerId}, #{taskContent}, #{startTime})
+    </insert>
+
+    <!-- 查询指定园林工 -->
+    <select id="selectGardenerById" parameterType="java.lang.Long" resultType="int">
+        select count(*)
+        from gardener
+        where id = #{id}
+    </select>
+
+    <!-- 删除指定园林工 -->
+    <delete id="deleteGardenerById" parameterType="java.lang.Long">
+        delete
+        from gardener
+        where id = #{id}
+    </delete>
+
+    <!-- 查看指定园林工所有任务 -->
+    <select id="getListTaskByGardenerId" parameterType="java.lang.Long" resultType="com.libv.entity.WorkTask">
+        select *
+        from work_task
+        where gardener_id = #{id}
+    </select>
+
+    <!-- 查看所管辖园林工信息 -->
+    <select id="getListGardenerInfo" parameterType="java.lang.Long" resultType="com.libv.entity.Gardener">
+        select id, name, phone, garden_manager_id, sex, birthday, avatar
+        from gardener
+        where garden_manager_id = #{gardenManagerId}
+    </select>
+
+    <!-- 修改指定园林工信息 -->
+    <update id="modifyGardenerInfo" parameterType="com.libv.entity.Gardener">
+        update gardener
+        <set>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="password != null">
+                password = #{password},
+            </if>
+            <if test="sex != null">
+                sex = #{sex},
+            </if>
+            <if test="phone != null">
+                phone = #{phone},
+            </if>
+            <if test="birthday != null">
+                birthday = #{birthday}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!-- 查看指定园林工所有打卡信息 -->
+    <select id="getGardenerSignRecord" resultType="com.libv.entity.SignRecord">
+        select id, user_id, sign_time, sign_area
+        from sign_record
+        where user_id = #{gardenerId} limit #{start}
+            , #{count}
+    </select>
+
+
+    <!-- 查看管理员所管辖的所有园区列表 -->
+    <select id="getGardenAreaList" resultType="com.libv.entity.GardenArea">
+        select id, position, create_time, update_time
+        from garden_area
+        where id in (select garden_area_id
+                     from garden_manager_garden_area
+                     where manager_id = #{managerId})
+    </select>
+
+    <!-- 查询管理员所管理的所有园区以及每个园区下所有的块区信息 -->
+    <select id="getGardenAreaBlockList" resultMap="AreaBlockMap">
+        select garden_area.id as area_id,garden_area.garden_name as gardenName,
+        garden_block.garden_id as garden_id,garden_block.id as block_id,garden_block.block_name as block_name,garden_block.block_status as garden_block
+        from garden_area
+        join garden_manager_garden_area
+        on garden_area.id = garden_manager_garden_area.garden_area_id
+        join garden_block
+        on garden_area.id = garden_block.garden_id
+        where garden_manager_garden_area.manager_id = #{managerId}
+    </select>
+    
+    <resultMap id="AreaBlockMap" type="com.libv.dto.GardenAreaBlockDTO">
+        <id property="areaId" column="area_id"/>
+        <result property="gardenName" column="gardenName" />
+        <collection  property="blockDetailDTOList" javaType="java.util.ArrayList" ofType ="com.libv.entity.GardenAreaBlock" resultMap="BlockResultMap">
+            <id property="gardenId" column="garden_id"/>
+        </collection>
+    </resultMap>
+
+    <resultMap type="com.libv.entity.GardenAreaBlock" id="BlockResultMap">
+        <result property="id" column="block_id" jdbcType="BIGINT" />
+        <result property="blockName" column="block_name" jdbcType="VARCHAR" />
+        <result property="blockStatus" column="block_status" jdbcType="VARCHAR" />
+    </resultMap >
+
+    <select id="getBlockInfoByGardenid" resultType="com.libv.entity.GardenAreaBlock">
+        select id, block_name, block_status
+        from garden_block
+        where garden_id = #{gardenId};
+    </select>
+
+    <select id="getGardenAreaBlockDeviceInfo" resultType="com.libv.dto.DeviceDTO">
+        select id, device_name, device_status,device_type,address
+        from device
+        where block_id = #{blockId};
+    </select>
+
+    <select id="getGardenAreaBlockInfo" resultType="com.libv.entity.GardenAreaBlock">
+        select id, block_name, block_status
+        from garden_block
+        where id = #{blockId};
+    </select>
+
+
+    <!-- 修改指定管理员的个人信息 -->
+    <update id="modifyGardenerMangerInfo" parameterType="com.libv.entity.GardenManager">
+        update garden_manager
+        <set>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="password != null">
+                password = #{password},
+            </if>
+            <if test="sex != null">
+                sex = #{sex},
+            </if>
+            <if test="phone != null">
+                phone = #{phone},
+            </if>
+            <if test="birthday != null">
+                birthday = #{birthday}
+            </if>
+        </set>
+        where phone = #{phone}
+    </update>
+
+
+    <update id="updateLoginStatus" >
+        update garden_manager
+        set login_status = #{loginStatus}
+        WHERE phone = #{phone};
+    </update>
+
+    <select id="selectMangerByPhone" resultType="com.libv.entity.GardenManager">
+        select id, name, password,phone,sex,birthday,admin_id,create_time,update_time,avatar,login_status
+        from garden_manager
+        where phone = #{phone};
+    </select>
+</mapper>
+

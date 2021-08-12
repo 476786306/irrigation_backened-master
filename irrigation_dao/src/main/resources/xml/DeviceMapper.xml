@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.libv.mapper.DeviceMapper">
+    <update id="setSwitchStatus">
+        update device
+        set device_status=#{devicestatus}
+        where block_id = #{blockid} and id = #{deviceid}
+    </update>
+
+    <update id="setSwitchStatusByDeviceId">
+        update device
+        set device_status=#{devicestatus}
+        where id = #{deviceid}
+    </update>
+
+    <select id="selectDeviceByBlockId" resultType="com.libv.entity.Device">
+       SELECT id, device_name ,
+         device_status ,
+          device_type ,
+          block_id ,
+          address,
+          create_time,
+          update_time
+        FROM device
+        where block_id = #{blockid}
+    </select>
+</mapper>

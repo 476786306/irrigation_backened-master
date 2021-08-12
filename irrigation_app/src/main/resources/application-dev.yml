@@ -1,0 +1,33 @@
+server:
+  port: 9020
+  tomcat:
+    accept-count: 1000
+    max-connections: 2000
+    max-threads: 300
+    connection-timeout: 30000
+    basedir: D:\Bili\images\temp
+spring:
+  servlet:
+    multipart:
+      max-file-size: 15MB
+      max-request-size: 15MB
+      location: D:\Bili\images\temp
+  datasource:
+    url: jdbc:mysql://121.4.216.6:3306/irrigation?useSSL=false&setUnicode=true&characterEncoding=utf8
+    username: root
+    password: Test123_
+    driver-class-name: com.mysql.jdbc.Driver
+    hikari:
+      max-lifetime: 30000
+      maximum-pool-size: 10
+image-path: D:\Bili\images\
+broker-url: tcp://121.4.216.6:1883
+interval-time: 60000
+mybatis-plus:
+  mapper-locations: classpath*:xml/*.xml
+  global-config:
+    banner: false
+
+logging:
+  level:
+    com.libv.mapper : debug

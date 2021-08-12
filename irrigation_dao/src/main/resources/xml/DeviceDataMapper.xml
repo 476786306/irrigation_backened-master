@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.libv.mapper.DeviceDataMapper">
+
+
+    <select id="selectLatestDeviceData" resultType="com.libv.entity.DeviceData">
+      SELECT id,deviceid,address,channel,humidity,
+      temperature,nitrogen,phosphorus,potassium,
+      pressure,gatetime,`status`,systemtime
+      from device_data WHERE humidity is not NULL
+      ORDER BY systemtime DESC  LIMIT 1
+    </select>
+
+
+    <select id="selectDeviceHumidityByBlockid" resultType="com.libv.entity.DeviceData">
+      SELECT id,deviceid,address,channel,humidity,
+      temperature,nitrogen,phosphorus,potassium,
+      pressure,gatetime,`status`,systemtime
+      from device_data WHERE humidity is not NULL
+      and deviceid = #{blockid}
+      ORDER BY systemtime DESC  LIMIT 1
+    </select>
+
+
+    <select id="selectDeviceNitrogenyBlockid" resultType="com.libv.entity.DeviceData">
+      SELECT id,deviceid,address,channel,humidity,
+      temperature,nitrogen,phosphorus,potassium,
+      pressure,gatetime,`status`,systemtime
+      from device_data WHERE nitrogen is not NULL
+      and deviceid = #{blockid}
+      ORDER BY systemtime DESC  LIMIT 1
+    </select>
+
+
+</mapper>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.libv.mapper.ExpertMapper">
+    <select id="viewAllQuestion" resultType="com.libv.entity.Question">
+        select id,
+               variety,
+               detail,
+               picture_url,
+               reply,
+               reply_picture_url,
+               is_rejected as whetherRejected,
+               questioner_id,
+               answerer_id,
+               create_time
+        from question
+        where answerer_id = #{expertId} limit #{start}
+            , #{count}
+    </select>
+</mapper>

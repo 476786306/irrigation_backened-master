@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.libv.mapper.AdminMapper">
+    <insert id="addExpert" parameterType="com.libv.entity.Expert">
+        insert into expert(id, name, password, phone, sex, birthday, major, admin_id, avatar, create_time, update_time)
+        values (#{id}, #{name}, #{password}, #{phone}, #{sex}, #{birthday}, #{major}, #{adminId}, #{avatar},
+                now(), #{updateTime})
+    </insert>
+</mapper>

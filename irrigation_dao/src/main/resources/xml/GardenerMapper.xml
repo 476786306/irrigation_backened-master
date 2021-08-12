@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.libv.mapper.GardenerMapper">
+    <select id="checkIsSigned" resultType="int">
+        select count(*)
+        from sign_record
+        where user_id = #{gardenerId}
+          and DATE_FORMAT(sign_time, '%Y%m%d') = DATE_FORMAT(now(), '%Y%m%d')
+    </select>
+
+    <insert id="sign">
+        insert into sign_record(user_id, sign_time, sign_area)
+        values (#{gardenerId}, #{todayTime}, #{area})
+    </insert>
+
+    <select id="getAllTask" resultType="com.libv.entity.WorkTask">
+        select id, gardener_id, task_content, picture_url, is_done AS whetherDone, start_time, end_time
+        from work_task
+        where gardener_id = #{gardenerId} limit #{start}
+            , #{count}
+    </select>
+
+    <select id="getListSignRecord" resultType="com.libv.entity.SignRecord">
+        select id, user_id, sign_time, sign_area
+        from sign_record
+        where user_id = #{gardenerId} limit #{start}
+            , #{count}
+        order by sign_time desc
+    </select>
+
+    <update id="updateTaskStatus">
+        update work_task
+        set is_done=1
+        where id = #{taskId}
+    </update>
+
+    <select id="checkTaskIsExist" resultType="int">
+        select count(*)
+        from work_task
+        where id = #{taskId}
+    </select>
+</mapper>
